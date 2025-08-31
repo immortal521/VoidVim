@@ -173,14 +173,40 @@ M.Time = {
   end,
 }
 
-M.Git = {
+M.GitBranch = {
   condition = function()
-    return vim.b.minigit_summary_string ~= nil
+    return vim.b.minigit_summary ~= nil
   end,
   provider = function()
-    return vim.b.minigit_summary_string
+    local summary = vim.b.minigit_summary
+    return " " .. (summary.head_name or "")
   end,
-  h1 = { fg = "orange", bold = true },
+  hl = { fg = "orange", bold = true },
+}
+
+M.GitDiff = {
+  condition = function()
+    return VoidVim.has("mini.diff")
+  end,
+  provider = function()
+    local stats = MiniDiff.get_stats(0) -- 当前 buffer
+    if not stats then
+      return ""
+    end
+    local added = (stats.added > 0) and (" +" .. stats.added) or ""
+    local removed = (stats.removed > 0) and (" -" .. stats.removed) or ""
+    local changed = (stats.changed > 0) and (" ~" .. stats.changed) or ""
+    return added .. removed .. changed
+  end,
+  hl = { fg = "gray" },
+}
+
+M.Git = {
+  condition = function()
+    return vim.b.minigit_summary ~= nil
+  end,
+  M.GitBranch,
+  M.GitDiff,
 }
 
 return M
