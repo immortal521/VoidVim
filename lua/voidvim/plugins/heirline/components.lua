@@ -96,7 +96,7 @@ local color_demo = {
 }
 
 local mode_colors = {
-  n = palette.bg,
+  n = palette.blue,
   i = palette.green,
   v = palette.magenta,
   V = palette.magenta,
@@ -171,6 +171,16 @@ M.Time = {
   hl = function(self)
     return { fg = palette.fg_gutter, bg = self.mode_color, bold = true }
   end,
+}
+
+M.Git = {
+  condition = function()
+    return vim.b.minigit_summary_string ~= nil
+  end,
+  provider = function()
+    return vim.b.minigit_summary_string
+  end,
+  h1 = { fg = "orange", bold = true },
 }
 
 return M
