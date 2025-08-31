@@ -148,7 +148,7 @@ M.Ruler = {
 M.Mode = {
   init = get_mode_with_color,
   provider = function(self)
-    local mode_name = self.mode_names[self.mode:sub(1, 1)] or self.mode or "?"
+    local mode_name = mode_names[self.mode:sub(1, 1)] or self.mode or "?"
     return " %1(" .. mode_name .. "%) "
   end,
   hl = function(self)

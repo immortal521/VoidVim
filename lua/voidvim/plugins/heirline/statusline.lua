@@ -1,4 +1,4 @@
-local components = require("components")
+local components = require("voidvim.plugins.heirline.components")
 
 return {
   components.Mode,
