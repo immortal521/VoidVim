@@ -9,9 +9,6 @@ local colors = {
   diag_error = hUtils.get_highlight("DiagnosticError").fg,
   diag_hint = hUtils.get_highlight("DiagnosticHint").fg,
   diag_info = hUtils.get_highlight("DiagnosticInfo").fg,
-  git_del = hUtils.get_highlight("diffDeleted").fg,
-  git_add = hUtils.get_highlight("diffAdded").fg,
-  git_change = hUtils.get_highlight("diffChanged").fg,
 }
 
 local modes = {
@@ -89,12 +86,55 @@ M.GitBranch = {
   end,
 }
 
+M.GitDiff = {
+  condition = function(self)
+    self.status_dict = vim.b.minidiff_summary
+    return self.status_dict ~= nil
+  end,
+  {
+    condition = function(self)
+      return self.status_dict.add > 0 or self.status_dict.change > 0 or self.status_dict.delete > 0
+    end,
+    {
+      { provider = " │ " },
+      {
+        condition = function(self)
+          return self.status_dict.add > 0
+        end,
+        provider = function(self)
+          return " " .. self.status_dict.add .. " "
+        end,
+        hl = { fg = palette.git.add },
+      },
+      {
+        condition = function(self)
+          return self.status_dict.change > 0
+        end,
+        provider = function(self)
+          return " " .. self.status_dict.change .. " "
+        end,
+        hl = { fg = palette.git.change },
+      },
+      {
+        condition = function(self)
+          return self.status_dict.delete > 0
+        end,
+        provider = function(self)
+          return " " .. self.status_dict.delete .. " "
+        end,
+        hl = { fg = palette.git.delete },
+      },
+    },
+  },
+}
+
 M.StatusLine = {
   init = get_mode_with_color,
   M.Mode,
   M.GitBranch,
   M.Fill,
-  M.Ruler, 
+  M.GitDiff,
+  M.Ruler,
   M.Time,
 }
 -- local left_angle = ""
