@@ -79,7 +79,7 @@ M.GitBranch = {
   end,
   provider = function()
     local summary = vim.b.minigit_summary or {}
-    return "  " .. (summary.head_name or "") .. " "
+    return " 󰘬 " .. (summary.head_name or "") .. " "
   end,
   hl = function(self)
     return { fg = self.mode_color, bg = palette.fg_gutter, bold = true }
@@ -128,10 +128,61 @@ M.GitDiff = {
   },
 }
 
+M.Diagnostic = {
+  condition = conditions.has_diagnostics,
+  static = {
+    error_icon = icons.diagnostics.Error .. " ",
+    warn_icon = icons.diagnostics.Warn .. " ",
+    info_icon = icons.diagnostics.Info .. " ",
+    hint_icon = icons.diagnostics.Hint .. " ",
+  },
+  init = function(self)
+    self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
+    self.warnings = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.WARN })
+    self.hints = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.HINT })
+    self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
+  end,
+  update = { "DiagnosticChanged", "BufEnter" },
+  {
+    provider = function(self)
+      -- 0 is just another output, we can decide to print it or not!
+      return self.errors > 0 and (self.error_icon .. self.errors .. " ")
+    end,
+    hl = { fg = colors.diag_error },
+  },
+  {
+    provider = function(self)
+      return self.warnings > 0 and (self.warn_icon .. self.warnings .. " ")
+    end,
+    hl = { fg = colors.diag_warn },
+  },
+  {
+    provider = function(self)
+      return self.info > 0 and (self.info_icon .. self.info .. " ")
+    end,
+    hl = { fg = colors.diag_info },
+  },
+  {
+    provider = function(self)
+      return self.hints > 0 and (self.hint_icon .. self.hints)
+    end,
+    hl = { fg = colors.diag_hint },
+  },
+  on_click = {
+    name = "heirline_diagnostic",
+    callback = function()
+      if VoidVim.has("snacks") then
+        Snacks.picker.diagnostics_buffer()
+      end
+    end,
+  },
+}
+
 M.StatusLine = {
   init = get_mode_with_color,
   M.Mode,
   M.GitBranch,
+  M.Diagnostic,
   M.Fill,
   M.GitDiff,
   M.Ruler,
