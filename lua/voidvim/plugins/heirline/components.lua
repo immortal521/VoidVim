@@ -131,10 +131,10 @@ M.GitDiff = {
 M.Diagnostic = {
   condition = conditions.has_diagnostics,
   static = {
-    error_icon = icons.diagnostics.Error .. " ",
-    warn_icon = icons.diagnostics.Warn .. " ",
-    info_icon = icons.diagnostics.Info .. " ",
-    hint_icon = icons.diagnostics.Hint .. " ",
+    error_icon = icons.diagnostics.Error,
+    warn_icon = icons.diagnostics.Warn,
+    info_icon = icons.diagnostics.Info,
+    hint_icon = icons.diagnostics.Hint,
   },
   init = function(self)
     self.errors = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.ERROR })
@@ -143,6 +143,7 @@ M.Diagnostic = {
     self.info = #vim.diagnostic.get(0, { severity = vim.diagnostic.severity.INFO })
   end,
   update = { "DiagnosticChanged", "BufEnter" },
+  { provider = " " },
   {
     provider = function(self)
       -- 0 is just another output, we can decide to print it or not!
@@ -168,14 +169,7 @@ M.Diagnostic = {
     end,
     hl = { fg = colors.diag_hint },
   },
-  on_click = {
-    name = "heirline_diagnostic",
-    callback = function()
-      if VoidVim.has("snacks") then
-        Snacks.picker.diagnostics_buffer()
-      end
-    end,
-  },
+  { provider = " │ " },
 }
 
 M.StatusLine = {
