@@ -169,7 +169,7 @@ M.Diagnostic = {
     end,
     hl = { fg = colors.diag_hint },
   },
-  { provider = " │ " },
+  { provider = "│" },
 }
 
 M.StatusLine = {
