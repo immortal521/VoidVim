@@ -53,12 +53,21 @@ return {
       file = {
         README = { glyph = "󰆈", hl = "MiniIconsYellow" },
         ["README.md"] = { glyph = "󰆈", hl = "MiniIconsYellow" },
+        [".keep"] = { glyph = "󰊢", hl = "MiniIconsGrey" },
+        ["devcontainer.json"] = { glyph = "", hl = "MiniIconsAzure" },
       },
       filetype = {
         bash = { glyph = "󱆃", hl = "MiniIconsGreen" },
         sh = { glyph = "󱆃", hl = "MiniIconsGrey" },
         toml = { glyph = "󱄽", hl = "MiniIconsOrange" },
+        dotenv = { glyph = "", hl = "MiniIconsYellow" },
       },
     },
+    init = function()
+      package.preload["nvim-web-devicons"] = function()
+        require("mini.icons").mock_nvim_web_devicons()
+        return package.loaded["nvim-web-devicons"]
+      end
+    end,
   },
 }
