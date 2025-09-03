@@ -4,7 +4,7 @@ return {
     opts = {
       max_concurrent_installers = 8,
       ui = {
-        icon = {
+        icons = {
           package_installed = "✓",
           package_pending = "➜",
           package_uninstalled = "✗",
