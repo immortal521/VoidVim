@@ -150,7 +150,7 @@ function M.setup(opts)
       end
       M.load("keymaps")
 
-      if start_clipboard ~= nil then
+      if voidvim_clipboard ~= nil then
         vim.opt.clipboard = voidvim_clipboard
       end
 

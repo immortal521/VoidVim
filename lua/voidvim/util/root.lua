@@ -28,8 +28,24 @@ function M.detectors.lsp(buf)
   if not bufpath then
     return {}
   end
-
   local roots = {} ---@type string[]
+  local clients = VoidVim.lsp.get_clients({ bufnr = buf })
+  clients = vim.tbl_filter(function(client)
+    return not vim.tbl_contains(vim.g.root_lsp_ignore or {}, client.name)
+  end, clients)
+  for _, client in pairs(clients) do
+    local workspace = client.config.workspace_folders
+    for _, ws in pairs(workspace or {}) do
+      roots[#roots + 1] = vim.uri_to_fname(ws.uri)
+    end
+    if client.root_dir then
+      roots[#roots + 1] = client.root_dir
+    end
+  end
+  return vim.tbl_filter(function(path)
+    path = VoidVim.norm(path)
+    return path and bufpath:find(path, 1, true) == 1
+  end, roots)
 end
 
 ---@param patterns string[]|string
