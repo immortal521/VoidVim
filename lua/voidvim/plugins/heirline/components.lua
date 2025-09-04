@@ -44,7 +44,7 @@ M.Fill = { provider = "%=" }
 M.Ruler = {
   provider = " %P  %(%l:%c%) ",
   hl = function(self)
-    return { bg = palette.fg_gutter, fg = self.mode_color, bold = true }
+    return { bg = palette.fg_gutter, fg = self.mode_color }
   end,
 }
 
@@ -172,12 +172,23 @@ M.Diagnostic = {
   { provider = "│" },
 }
 
+M.Profile = {
+  {
+    provider = function()
+      return require("noice").api.status.command.get()
+    end,
+    hl = { fg = palette.magenta },
+  },
+  { provider = " " },
+}
+
 M.StatusLine = {
   init = get_mode_with_color,
   M.Mode,
   M.GitBranch,
   M.Diagnostic,
   M.Fill,
+  M.Profile,
   M.GitDiff,
   M.Ruler,
   M.Time,
