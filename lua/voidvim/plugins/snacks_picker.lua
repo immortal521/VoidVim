@@ -26,14 +26,14 @@ return {
   -- stylua: ignore
   keys = {
     { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
-    { "<leader>/", Snacks.picker.pick("grep"), desc = "Grep (Root Dir)" },
+    { "<leader>/", function() Snacks.picker.pick("grep") end, desc = "Grep (Root Dir)" },
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
     { "<leader><space>", function() Snacks.picker.pick("files") end, desc = "Find Files (Root Dir)" },
 
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>fB", function() Snacks.picker.buffers({ hidden = true, nofile = true }) end, desc = "Buffers (all)" },
-    { "<leader>fc", function () Snacks.picker.pick("files", {cwd = vim.fn.stdpath("config")}) end, desc = "Find Config File" },
+    { "<leader>fc", function() Snacks.picker.pick("files", {cwd = vim.fn.stdpath("config")}) end, desc = "Find Config File" },
     { "<leader>ff", function() Snacks.picker.pick("files") end, desc = "Find Files (Root Dir)" },
     { "<leader>fF", function() Snacks.picker.pick("files", { root = false }) end, desc = "Find Files (cwd)" },
     { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Files (git-files)" },
