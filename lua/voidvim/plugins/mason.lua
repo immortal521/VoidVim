@@ -2,6 +2,7 @@ return {
   {
     "mason-org/mason.nvim",
     opts = {
+      ensure_installed = { "prettier" },
       max_concurrent_installers = 8,
       ui = {
         icons = {
