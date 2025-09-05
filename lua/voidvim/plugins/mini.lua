@@ -4,6 +4,7 @@ return {
   { "nvim-mini/mini.ai", version = false, opts = {} },
   {
     "nvim-mini/mini.diff",
+    event = "VeryLazy",
     version = false,
     keys = {
       {
