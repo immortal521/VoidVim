@@ -93,34 +93,37 @@ M.GitDiff = {
   end,
   {
     condition = function(self)
-      return self.status_dict.add > 0 or self.status_dict.change > 0 or self.status_dict.delete > 0
+      local add    = self.status_dict.add or 0
+      local change = self.status_dict.change or 0
+      local delete = self.status_dict.delete or 0
+      return add > 0 or change > 0 or delete > 0
     end,
     {
       { provider = " │ " },
       {
         condition = function(self)
-          return self.status_dict.add > 0
+          return (self.status_dict.add or 0) > 0
         end,
         provider = function(self)
-          return " " .. self.status_dict.add .. " "
+          return " " .. (self.status_dict.add or 0) .. " "
         end,
         hl = { fg = palette.git.add },
       },
       {
         condition = function(self)
-          return self.status_dict.change > 0
+          return (self.status_dict.change or 0) > 0
         end,
         provider = function(self)
-          return " " .. self.status_dict.change .. " "
+          return " " .. (self.status_dict.change or 0) .. " "
         end,
         hl = { fg = palette.git.change },
       },
       {
         condition = function(self)
-          return self.status_dict.delete > 0
+          return (self.status_dict.delete or 0) > 0
         end,
         provider = function(self)
-          return " " .. self.status_dict.delete .. " "
+          return " " .. (self.status_dict.delete or 0) .. " "
         end,
         hl = { fg = palette.git.delete },
       },
