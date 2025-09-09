@@ -6,6 +6,7 @@ local LazyUtil = require("lazy.core.util")
 ---@field plugin voidvim.util.plugin
 ---@field lsp voidvim.util.lsp
 ---@field root voidvim.util.root
+---@field cmp voidvim.util.cmp
 local M = {}
 
 setmetatable(M, {

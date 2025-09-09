@@ -1,6 +1,7 @@
 return {
   "saghen/blink.cmp",
   version = "1.*",
+  event = "InsertEnter",
   dependencies = {
     {
       "L3MON4D3/LuaSnip",
@@ -10,7 +11,10 @@ return {
       "saghen/blink.compat",
       optional = true, -- make optional so it's only enabled if any extras need it
       opts = {},
-      version = not vim.g.lazyvim_blink_main and "*",
+      version = "*",
+    },
+    {
+      "Exafunction/windsurf.nvim",
     },
   },
   opts = {
@@ -115,8 +119,13 @@ return {
     },
     snippets = { preset = "luasnip" },
     sources = {
-      default = { "lsp", "path", "buffer", "snippets" },
+      default = { "lsp", "path", "codeium", "snippets", "buffer" },
+      providers = {
+        codeium = { name = "Codeium", module = "codeium.blink", async = true },
+      },
     },
   },
-  opts_extend = { "sources.default" },
+  opts_extend = {
+    "sources.default",
+  },
 }

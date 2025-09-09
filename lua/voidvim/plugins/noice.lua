@@ -24,6 +24,13 @@ return {
         },
         view = "mini",
       },
+      {
+        filter = {
+          event = "notify",
+          find = "supermaven%-nvim",
+        },
+        opts = { skip = true },
+      },
     },
     presets = {
       bottom_search = true,
