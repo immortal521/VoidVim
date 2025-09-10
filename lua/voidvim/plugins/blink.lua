@@ -16,6 +16,9 @@ return {
     {
       "Exafunction/windsurf.nvim",
     },
+    {
+      "jdrupal-dev/css-vars.nvim",
+    },
   },
   opts = {
 
@@ -122,6 +125,13 @@ return {
       default = { "lsp", "path", "codeium", "snippets", "buffer" },
       providers = {
         codeium = { name = "Codeium", module = "codeium.blink", async = true },
+        css_vars = {
+          name = "css-vars",
+          module = "css-vars.blink",
+          opts = {
+            search_extensions = { ".js", ".ts", ".jsx", ".tsx", ".vue" },
+          },
+        },
       },
     },
   },
