@@ -44,6 +44,12 @@ return {
         end,
       },
     },
+    buf_options = {
+      undofile = false,
+      buftype = "nofile",
+      buflisted = false, -- 不加入 buffer 列表
+      bufhidden = "hide",
+    },
     win_options = {
       winbar = "%!v:lua.get_oil_winbar()",
     },

@@ -1,7 +1,7 @@
 return {
   "folke/persistence.nvim",
   event = "BufReadPre",
-  opts = {},
+  opts = { ignore_filetypes = { "oil" } },
   keys = {
     {
       "<leader>qs",
