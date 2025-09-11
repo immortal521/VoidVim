@@ -27,6 +27,13 @@ function M.setup(shell)
     -- Setting shell quote options
     vim.o.shellquote = ""
     vim.o.shellxquote = ""
+  else
+    -- fallback to POSIX-like shell (bash/zsh)
+    vim.o.shellcmdflag = "-c"
+    vim.o.shellredir = ">%s 2>&1"
+    vim.o.shellpipe = "2>&1 | tee %s"
+    vim.o.shellquote = ""
+    vim.o.shellxquote = ""
   end
 end
 
