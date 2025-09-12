@@ -45,8 +45,6 @@ return {
       },
     },
     buf_options = {
-      undofile = false,
-      buftype = "nofile",
       buflisted = false, -- 不加入 buffer 列表
       bufhidden = "hide",
     },
