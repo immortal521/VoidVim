@@ -6,6 +6,8 @@ vim.g.maplocalleader = "\\"
 vim.g.autoformat = false
 vim.b.disable_autoformat = true
 
+vim.o.showtabline = 2
+
 -- Snacks animations
 -- Set to `false` to globally disable all snacks animations
 vim.g.snacks_animate = true
