@@ -13,7 +13,7 @@ return {
     vim.opt.cmdheight = 0
     require("heirline").setup({
       statusline = require("voidvim.plugins.heirline.statusline"),
-      -- tabline = require("custom.config.heirline.bufferline"),
+      tabline = require("voidvim.plugins.heirline.bufferline"),
     })
   end,
 }

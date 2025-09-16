@@ -93,7 +93,7 @@ M.GitDiff = {
   end,
   {
     condition = function(self)
-      local add    = self.status_dict.add or 0
+      local add = self.status_dict.add or 0
       local change = self.status_dict.change or 0
       local delete = self.status_dict.delete or 0
       return add > 0 or change > 0 or delete > 0
@@ -175,6 +175,32 @@ M.Diagnostic = {
   { provider = "│" },
 }
 
+M.MacroRecording = {
+  condition = conditions.is_active,
+  init = function(self)
+    self.reg_recording = vim.fn.reg_recording()
+    self.status_dict = vim.b.gitsigns_status_dict or { added = 0, removed = 0, changed = 0 }
+    self.has_changes = self.status_dict.added ~= 0 or self.status_dict.removed ~= 0 or self.status_dict.changed ~= 0
+  end,
+  {
+    condition = function(self)
+      return self.reg_recording ~= ""
+    end,
+    {
+      provider = "󰻃 ",
+      hl = { fg = palette.maroon },
+    },
+    {
+      provider = function(self)
+        return self.reg_recording
+      end,
+      hl = { fg = palette.maroon, italic = false, bold = true },
+    },
+    hl = { fg = palette.purple },
+  },
+  update = { "RecordingEnter", "RecordingLeave" },
+} -- MacroRecording
+
 M.Profile = {
   {
     provider = function()
@@ -183,6 +209,134 @@ M.Profile = {
     hl = { fg = palette.magenta },
   },
   { provider = " " },
+}
+
+M.FileIcon = {
+  condition = function(self)
+    return vim.fn.fnamemodify(self.filename, ":.") ~= ""
+  end,
+  init = function(self)
+    self.is_modified = vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
+    local filename = self.filename
+    local extension = vim.fn.fnamemodify(filename, ":e")
+    local icon, hl, _ = MiniIcons.get("file", "file." .. extension)
+    local bt = vim.api.nvim_get_option_value("buftype", { buf = self.bufnr }) or nil
+    if bt and bt == "terminal" then
+      icon = ""
+    end
+    self.icon = icon
+    self.icon_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = hl })["fg"])
+  end,
+  provider = function(self)
+    return self.icon and (self.icon .. " ")
+  end,
+  hl = function(self)
+    return { fg = self.is_modified and self.icon_color or dim_color }
+  end,
+}
+-- we redefine the filename component, as we probably only want the tail and not the relative path
+M.FileName = {
+  init = function(self)
+    self.is_modified = vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
+    local filename = self.filename
+    local extension = vim.fn.fnamemodify(filename, ":e")
+    local _, hl, _ = MiniIcons.get("file", "file." .. extension)
+    self.icon_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = hl })["fg"])
+  end,
+  provider = function(self)
+    -- self.filename will be defined later, just keep looking at the example!
+    local filename = self.filename
+    filename = filename == "" and vim.bo.filetype or vim.fn.fnamemodify(filename, ":t")
+    return "" .. filename .. ""
+  end,
+  hl = function(self)
+    return {
+      -- fg = self.is_modified and palette.yellow or palette.surface2,
+      fg = self.is_modified and self.icon_color or dim_color,
+      italic = self.is_modified,
+    }
+  end,
+}
+
+-- we redefine the filename component, as we probably only want the tail and not the relative path
+M.FilePath = {
+  provider = function(self)
+    -- first, trim the pattern relative to the current directory. For other
+    -- options, see :h filename-modifers
+    local filename = vim.fn.fnamemodify(self.filename, ":.")
+    if filename == "" then
+      return vim.bo.filetype ~= "" and vim.bo.filetype or vim.bo.buftype
+    end
+    -- now, if the filename would occupy more than 1/4th of the available
+    -- space, we trim the file path to its initials
+    -- See Flexible Components section below for dynamic truncation
+    -- if not conditions.width_percent_below(#filename, 0.25) then
+    --   filename = vim.fn.pathshorten(filename, 4)
+    -- end
+    return filename
+  end,
+  hl = function(self)
+    return {
+      fg = self.is_active and palette.text or palette.subtext0,
+      bold = self.is_active or self.is_visible,
+      italic = self.is_active,
+    }
+  end,
+}
+
+-- this looks exactly like the FileFlags component that we saw in
+-- #crash-course-part-ii-filename-and-friends, but we are indexing the bufnr explicitly
+-- also, we are adding a nice icon for terminal buffers.
+M.FileFlags = {
+  {
+    init = function(self)
+      local filename = self.filename
+      local extension = vim.fn.fnamemodify(filename, ":e")
+      local _, hl, _ = MiniIcons.get("file", "file." .. extension)
+      self.icon_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = hl })["fg"])
+    end,
+    condition = function(self)
+      local ignored_filetypes = {
+        "dap-repl",
+      }
+      local result = vim.fn.fnamemodify(self.filename, ":.") ~= ""
+        and vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
+      local ft = vim.api.nvim_get_option_value("buftype", { buf = self.bufnr })
+      if vim.tbl_contains(ignored_filetypes, ft) then
+        result = false
+      end
+      return result
+    end,
+    provider = " 􀴥 ",
+    hl = function(self)
+      return { fg = self.icon_color, bold = self.is_active }
+    end,
+  },
+  {
+    condition = function(self)
+      return not vim.api.nvim_get_option_value("modifiable", { buf = self.bufnr })
+        or vim.api.nvim_get_option_value("readonly", { buf = self.bufnr })
+    end,
+    provider = function(self)
+      if vim.api.nvim_get_option_value("buftype", { buf = self.bufnr }) == "terminal" then
+        return ""
+      else
+        return " "
+      end
+    end,
+    hl = { fg = palette.text },
+  },
+}
+
+M.FileNameBlock = {
+  init = function(self)
+    local bufnr = self.bufnr and self.bufnr or 0
+    self.filename = vim.api.nvim_buf_get_name(bufnr)
+  end,
+  hl = { fg = palette.text },
+  M.FileIcon,
+  M.FileName,
+  M.FileFlags,
 }
 
 M.StatusLine = {
