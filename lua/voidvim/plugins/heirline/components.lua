@@ -245,6 +245,9 @@ M.FileName = {
     -- self.filename will be defined later, just keep looking at the example!
     local filename = self.filename
     filename = filename == "" and vim.bo.filetype or vim.fn.fnamemodify(filename, ":t")
+    if filename == "" then
+      filename = "No File"
+    end
     return "" .. filename .. ""
   end,
   hl = function(self)

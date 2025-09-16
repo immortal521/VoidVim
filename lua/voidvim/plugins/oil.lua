@@ -45,7 +45,7 @@ return {
       },
     },
     buf_options = {
-      buflisted = false, -- 不加入 buffer 列表
+      buflisted = false,
       bufhidden = "hide",
     },
     win_options = {
