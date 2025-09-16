@@ -230,7 +230,7 @@ M.FileIcon = {
     return self.icon and (self.icon .. " ")
   end,
   hl = function(self)
-    return self.icon_color
+    return { fg = self.icon_color }
   end,
 }
 
