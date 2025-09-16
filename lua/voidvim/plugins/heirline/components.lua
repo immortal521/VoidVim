@@ -231,7 +231,7 @@ M.FileIcon = {
     return self.icon and (self.icon .. " ")
   end,
   hl = function(self)
-    return { fg = self.is_modified and self.icon_color or dim_color }
+    return { fg = self.is_modified and self.icon_color or palette.magenta2 }
   end,
 }
 -- we redefine the filename component, as we probably only want the tail and not the relative path
@@ -240,7 +240,7 @@ M.FileName = {
     self.is_modified = vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
     local filename = self.filename
     local extension = vim.fn.fnamemodify(filename, ":e")
-    local _, hl, _ = MiniIcons.get("file", "file." .. extension)
+    local _, hl, _ = require("mini.icons").get("file", "file." .. extension)
     self.icon_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = hl })["fg"])
   end,
   provider = function(self)
@@ -252,7 +252,7 @@ M.FileName = {
   hl = function(self)
     return {
       -- fg = self.is_modified and palette.yellow or palette.surface2,
-      fg = self.is_modified and self.icon_color or dim_color,
+      fg = self.is_modified and self.icon_color or palette.magenta2,
       italic = self.is_modified,
     }
   end,
@@ -277,7 +277,7 @@ M.FilePath = {
   end,
   hl = function(self)
     return {
-      fg = self.is_active and palette.text or palette.subtext0,
+      fg = self.is_active and palette.blue or palette.comment,
       bold = self.is_active or self.is_visible,
       italic = self.is_active,
     }
@@ -307,7 +307,7 @@ M.FileFlags = {
       end
       return result
     end,
-    provider = " 􀴥 ",
+    provider = " ",
     hl = function(self)
       return { fg = self.icon_color, bold = self.is_active }
     end,
@@ -324,7 +324,7 @@ M.FileFlags = {
         return " "
       end
     end,
-    hl = { fg = palette.text },
+    hl = { fg = palette.blue },
   },
 }
 
@@ -333,7 +333,7 @@ M.FileNameBlock = {
     local bufnr = self.bufnr and self.bufnr or 0
     self.filename = vim.api.nvim_buf_get_name(bufnr)
   end,
-  hl = { fg = palette.text },
+  hl = { fg = palette.blue },
   M.FileIcon,
   M.FileName,
   M.FileFlags,
@@ -343,7 +343,10 @@ M.StatusLine = {
   init = get_mode_with_color,
   M.Mode,
   M.GitBranch,
+  M.FileNameBlock,
   M.Diagnostic,
+  M.Fill,
+  M.MacroRecording,
   M.Fill,
   M.Profile,
   M.GitDiff,
