@@ -216,7 +216,6 @@ M.FileIcon = {
     return vim.fn.fnamemodify(self.filename, ":.") ~= ""
   end,
   init = function(self)
-    self.is_modified = vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
     local filename = self.filename
     local extension = vim.fn.fnamemodify(filename, ":e")
     local icon, hl, _ = require("mini.icons").get("file", "file." .. extension)
@@ -231,13 +230,12 @@ M.FileIcon = {
     return self.icon and (self.icon .. " ")
   end,
   hl = function(self)
-    return { fg = self.is_modified and self.icon_color or palette.magenta2 }
+    return self.icon_color
   end,
 }
--- we redefine the filename component, as we probably only want the tail and not the relative path
+
 M.FileName = {
   init = function(self)
-    self.is_modified = vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
     local filename = self.filename
     local extension = vim.fn.fnamemodify(filename, ":e")
     local _, hl, _ = require("mini.icons").get("file", "file." .. extension)
@@ -251,9 +249,9 @@ M.FileName = {
   end,
   hl = function(self)
     return {
-      -- fg = self.is_modified and palette.yellow or palette.surface2,
-      fg = self.is_modified and self.icon_color or "#FFFFFF",
-      italic = self.is_modified,
+      fg = self.is_active and palette.blue or palette.comment,
+      bold = self.is_active or self.is_visible,
+      italic = self.is_active,
     }
   end,
 }
@@ -261,18 +259,11 @@ M.FileName = {
 -- we redefine the filename component, as we probably only want the tail and not the relative path
 M.FilePath = {
   provider = function(self)
-    -- first, trim the pattern relative to the current directory. For other
-    -- options, see :h filename-modifers
     local filename = vim.fn.fnamemodify(self.filename, ":.")
     if filename == "" then
       return vim.bo.filetype ~= "" and vim.bo.filetype or vim.bo.buftype
     end
-    -- now, if the filename would occupy more than 1/4th of the available
-    -- space, we trim the file path to its initials
-    -- See Flexible Components section below for dynamic truncation
-    -- if not conditions.width_percent_below(#filename, 0.25) then
-    --   filename = vim.fn.pathshorten(filename, 4)
-    -- end
+
     return filename
   end,
   hl = function(self)
@@ -349,7 +340,7 @@ M.StatusLine = {
   init = get_mode_with_color,
   M.Mode,
   M.GitBranch,
-  M.FileNameBlock,
+  M.StatusLineFileNameBlock,
   M.Diagnostic,
   M.Fill,
   M.MacroRecording,
