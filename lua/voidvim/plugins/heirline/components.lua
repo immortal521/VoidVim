@@ -99,7 +99,7 @@ M.GitDiff = {
       return add > 0 or change > 0 or delete > 0
     end,
     {
-      { provider = " │ " },
+      { provider = "│ " },
       {
         condition = function(self)
           return (self.status_dict.add or 0) > 0
@@ -219,7 +219,7 @@ M.FileIcon = {
     self.is_modified = vim.api.nvim_get_option_value("modified", { buf = self.bufnr })
     local filename = self.filename
     local extension = vim.fn.fnamemodify(filename, ":e")
-    local icon, hl, _ = MiniIcons.get("file", "file." .. extension)
+    local icon, hl, _ = require("mini.icons").get("file", "file." .. extension)
     local bt = vim.api.nvim_get_option_value("buftype", { buf = self.bufnr }) or nil
     if bt and bt == "terminal" then
       icon = ""
@@ -252,7 +252,7 @@ M.FileName = {
   hl = function(self)
     return {
       -- fg = self.is_modified and palette.yellow or palette.surface2,
-      fg = self.is_modified and self.icon_color or palette.magenta2,
+      fg = self.is_modified and self.icon_color or "#FFFFFF",
       italic = self.is_modified,
     }
   end,
@@ -292,7 +292,7 @@ M.FileFlags = {
     init = function(self)
       local filename = self.filename
       local extension = vim.fn.fnamemodify(filename, ":e")
-      local _, hl, _ = MiniIcons.get("file", "file." .. extension)
+      local _, hl, _ = require("mini.icons").get("file", "file." .. extension)
       self.icon_color = string.format("#%06x", vim.api.nvim_get_hl(0, { name = hl })["fg"])
     end,
     condition = function(self)
@@ -337,6 +337,12 @@ M.FileNameBlock = {
   M.FileIcon,
   M.FileName,
   M.FileFlags,
+}
+
+M.StatusLineFileNameBlock = {
+  { provider = " " },
+  M.FileNameBlock,
+  { provider = " │" },
 }
 
 M.StatusLine = {
