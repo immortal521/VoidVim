@@ -212,6 +212,39 @@ function M.create_undo()
   end
 end
 
+---@param pkg string
+---@param path? string
+---@param opts? { warn?: boolean }
+function M.get_pkg_path(pkg, path, opts)
+  pcall(require, "mason") -- make sure Mason is loaded. Will fail when generating docs
+  local root = vim.env.MASON or (vim.fn.stdpath("data") .. "/mason")
+  opts = opts or {}
+  opts.warn = opts.warn == nil and true or opts.warn
+  path = path or ""
+  local ret = vim.fs.normalize(root .. "/packages/" .. pkg .. "/" .. path)
+  if opts.warn then
+    vim.schedule(function()
+      if not require("lazy.core.config").headless() and not vim.loop.fs_stat(ret) then
+        M.warn(
+          ("Mason package path not found for **%s**:\n- `%s`\nYou may need to force update the package."):format(
+            pkg,
+            path
+          )
+        )
+      end
+    end)
+  end
+  return ret
+end
+
+for _, level in ipairs({ "info", "warn", "error" }) do
+  M[level] = function(msg, opts)
+    opts = opts or {}
+    opts.title = opts.title or "LazyVim"
+    return LazyUtil[level](msg, opts)
+  end
+end
+
 local cache = {} ---@type table<(fun()), table<string, any>>
 ---@generic T: fun()
 ---@param fn T

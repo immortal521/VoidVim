@@ -1,17 +1,6 @@
 ---@class voidvim.util.lsp
 local M = {}
 
----@alias lsp.Client.filter {id?: number, bufnr?: number, name?: string, method?: string, filter?:fun(client: vim.lsp.Client):boolean}
-
----@param opts? lsp.Client.filter
-function M.get_clients(opts)
-  local clients = vim.lsp.get_clients(opts) or {}
-  if opts and opts.filter then
-    clients = vim.tbl_filter(opts.filter, clients)
-  end
-  return clients
-end
-
 ---@param on_attach fun(client:vim.lsp.Client, buffer)
 ---@param name? string
 function M.on_attach(on_attach, name)
@@ -66,7 +55,7 @@ function M._check_methods(client, buffer)
     clients[client] = clients[client] or {}
     -- 如果当前 client + buffer 还未标记
     if not clients[client][buffer] then
-      if client.supports_method and client.supports_method(method, { bufnr = buffer }) then
+      if client.supports_method and client:supports_method(method, buffer) then
         clients[client][buffer] = true
         vim.api.nvim_exec_autocmds("User", {
           pattern = "LspSupportsMethod",
@@ -110,12 +99,12 @@ function M.on_supports_method(method, fn)
 end
 
 -- @param opts? VoidFormatter| {filter?: (string|lsp.Client.filter)}
----@param opts? {filter?: (string|lsp.Client.filter)}
+---@param opts? {filter?: (string|vim.lsp.get_clients.Filter)}
 function M.formatter(opts)
   opts = opts or {}
   local filter = opts.filter or {}
   filter = type(filter) == "string" and { name = filter } or filter
-
+  ---@cast filter vim.lsp.get_clients.Filter
   local ret = {
     name = "LSP",
     primary = true,
@@ -140,7 +129,7 @@ function M.formatter(opts)
   return ret
 end
 
----@alias lsp.Client.format {timeout_ms?: number, format_options?: table} | lsp.Client.filter
+---@alias lsp.Client.format {timeout_ms?: number, format_options?: table} | vim.lsp.get_clients.Filter
 
 ---@param opts? lsp.Client.format
 function M.format(opts)

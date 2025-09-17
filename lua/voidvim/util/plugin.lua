@@ -1,3 +1,4 @@
+local Meta = require("lazy.core.meta")
 local Plugin = require("lazy.core.plugin")
 
 ---@class voidvim.util.plugin

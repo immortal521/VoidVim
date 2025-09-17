@@ -1,7 +1,7 @@
 return {
   "saghen/blink.cmp",
   version = "1.*",
-  event = "InsertEnter",
+  event = { "InsertEnter", "CmdlineEnter" },
   dependencies = {
     {
       "L3MON4D3/LuaSnip",
@@ -54,6 +54,12 @@ return {
       completion = {
         menu = {
           auto_show = true,
+        },
+        list = {
+          selection = {
+            preselect = false,
+            auto_insert = true,
+          },
         },
       },
     },
@@ -122,7 +128,7 @@ return {
     },
     snippets = { preset = "luasnip" },
     sources = {
-      default = { "lsp", "path", "codeium", "snippets", "buffer" },
+      default = { "lsp", "path", "codeium", "snippets", "buffer", "css_vars" },
       providers = {
         codeium = { name = "Codeium", module = "codeium.blink", async = true },
         css_vars = {
