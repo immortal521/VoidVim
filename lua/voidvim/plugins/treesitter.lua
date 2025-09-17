@@ -6,10 +6,7 @@ return {
     lazy = true,
     event = { "LazyFile", "VeryLazy" },
     build = ":TSUpdate",
-    init = function(plugin)
-      require("lazy.core.loader").add_to_rtp(plugin)
-      require("nvim-treesitter.query_predicates")
-    end,
+    init = function() end,
     cmd = { "TSUpdate", "TSInstall", "TSLog", "TSUninstall" },
     keys = {
       { "<c-space>", desc = "Increment Selection" },
